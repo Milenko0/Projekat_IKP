@@ -1,5 +1,4 @@
 #pragma once
-
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -12,7 +11,8 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define DEFAULT_BUFLEN 524
-#define DEFAULT_PORT 5555
+#define DEFAULT_PORT 5556
+
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
 bool InitializeWindowsSockets();
@@ -46,10 +46,10 @@ int Connect() {
 		closesocket(connectSocket);
 		WSACleanup();
 	}
-
 	return 0;
-
 }
+
+
 
 bool InitializeWindowsSockets()
 {
@@ -62,4 +62,6 @@ bool InitializeWindowsSockets()
 	}
 	return true;
 }
+
+
 
