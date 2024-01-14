@@ -20,13 +20,16 @@
 #define DEFAULT_PORT 5555
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
-//bool InitializeWindowsSockets();
-//int Connect();
 
 // socket used to communicate with server
 SOCKET connectSocket = INVALID_SOCKET;
 
-
+int Connect();
+bool InitializeWindowsSockets();
+void SendChoices(int choice, int interval);
+Measurement* GenerateMeasurement();
+Measurement* CreateMeasurement();
+bool TCPSend(SOCKET connectSocket, Measurement Measurement);
 
 int Connect() {
 	// create a socket
@@ -70,7 +73,24 @@ bool InitializeWindowsSockets()
 	return true;
 }
 
+void SendChoices(int choice, int interval) {
+	while (true) {
+		Measurement* m = (Measurement*)malloc(sizeof(Measurement));
+		if (choice == 1) {
+			m = CreateMeasurement();
+		}
+		else m = GenerateMeasurement();
 
+		if (TCPSend(connectSocket, *m)) {
+			//printf("Poslato: %s %s %d \n",);
+		}
+		else {
+			printf("Doslo je do greske prilikom slanja\n");
+		}
+		free(m);
+		Sleep(interval);
+	}
+}
 
 Measurement* GenerateMeasurement() {
 	Measurement* measure = (Measurement*)malloc(sizeof(Measurement));

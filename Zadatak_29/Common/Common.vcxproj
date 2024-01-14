@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Lista.cpp" />
     <ClCompile Include="Measurement.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Lista.h" />
     <ClInclude Include="Measurement.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

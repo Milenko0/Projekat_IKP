@@ -1,6 +1,5 @@
 #include "../Publisher/Publisher.h"
 
-void SendChoices(int choice, int interval);
 
 int main()
 {
@@ -15,6 +14,7 @@ int main()
 
 	if (Connect())
 		return 1;
+
 	printf("Publisher pokrenut.");
 	
 	int interval = 500;
@@ -50,21 +50,4 @@ int main()
 	return 0;
 }
 
-void SendChoices(int choice, int interval) {
-	while (true) {
-		Measurement* m = (Measurement*)malloc(sizeof(Measurement));
-		if (choice == 1) {
-			m = CreateMeasurement();
-		}
-		else m = GenerateMeasurement();
 
-		if (TCPSend(connectSocket, *m)) {
-			//printf("Poslato: %s %s %d \n",);
-		}
-		else {
-			printf("Doslo je do greske prilikom slanja\n");
-		}
-		free(m);
-		Sleep(interval);
-	}
-}

@@ -1,21 +1,29 @@
 #include "../Subscriber/Subscriber.h"
 
-int __cdecl main(int argc, char** argv)
+
+int main()
 {
 	if (InitializeWindowsSockets() == false)
 	{
-		// we won't log anything since it will be logged
-		// by InitializeWindowsSockets() function
 		return 1;
 	}
 
-	//konekcija na server nije uspela
 	if (Connect())
 		return 1;
 
+    printf("Subscriber pokrenut.\n");
+
+    Subscribe();
+
+    printf("Subscriber je pretplacen na izabrani topik.\n");
+
+    StartRecieveThread();
+
+    getchar();
 	// cleanup
 	closesocket(connectSocket);
 	WSACleanup();
 
 	return 0;
 }
+

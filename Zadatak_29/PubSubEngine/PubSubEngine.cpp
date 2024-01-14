@@ -1,10 +1,9 @@
-
-#include <conio.h>
 #include "../PubSubEngine/PubSubEngine.h"
 
 
-int  main(void)
+int  main()
 {
+	DWORD listenID;
 	// Socket used for listening for new clients 
 	SOCKET listenSocketPublisher = INVALID_SOCKET;
 	SOCKET listenSocketSubscriber = INVALID_SOCKET;
@@ -24,6 +23,7 @@ int  main(void)
 	iResultPublisher = listen(listenSocketPublisher, SOMAXCONN);
 	IResultSubscriber = listen(listenSocketSubscriber, SOMAXCONN);
 
+	
 	if (iResultPublisher == SOCKET_ERROR || IResultSubscriber == SOCKET_ERROR)
 	{
 		printf("listen failed with error: %d\n", WSAGetLastError());
@@ -33,14 +33,17 @@ int  main(void)
 		return 1;
 	}
 
-	printf("Server initialized, waiting for clients.\n");
+	InitCriticalSections();
+	SetAcceptedSocketsInvalid();
 
-	// cleanup
-	closesocket(listenSocketPublisher);
-	closesocket(listenSocketSubscriber);
-	listenSocketPublisher = INVALID_SOCKET;
-	listenSocketSubscriber = INVALID_SOCKET;
-	WSACleanup();
+	printf("Server initialized, waiting for clients.\n");
+	listenHandle = CreateThread(NULL, 0, &Listen, (LPVOID)0, 0, &listenID);
+
+	if (listenHandle) {
+		WaitForSingleObject(listenHandle, INFINITE);
+	}
+	Cleanup();
+	//WSACleanup();
 
 	return 0;
 }
