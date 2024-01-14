@@ -15,7 +15,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define DEFAULT_BUFLEN 524
-#define DEFAULT_PORT 5556
+#define DEFAULT_PORT 5555
 
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
@@ -38,11 +38,12 @@ DWORD WINAPI Receive(LPVOID param)
 		Measurement* newMeasurement = (Measurement*)malloc(sizeof(Measurement));
 		memcpy(newMeasurement, data, sizeof(Measurement));
 		if (Validate(newMeasurement)) {
-			printf("VALIDNO: ");
+			printf("VALIDNO:\t");
 		}
 		else {
-			printf("NEVALIDNO: ");
+			printf("NEVALIDNO:\t");
 		}
+        PrintMeasurement(newMeasurement);
 		free(newMeasurement);
 		Sleep(10);
 	}

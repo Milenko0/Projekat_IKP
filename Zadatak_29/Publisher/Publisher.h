@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <time.h>
-#include "../Common/Measurement.h"
+#include "../Common/Measurement.cpp"
 #pragma comment(lib, "ws2_32.lib")
 
 #define WIN32_LEAN_AND_MEAN

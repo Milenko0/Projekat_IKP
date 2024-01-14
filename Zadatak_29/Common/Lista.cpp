@@ -91,7 +91,6 @@ bool DeleteNode(NODE** head, void* toDelete, size_t size) {
         if (dwWaitResult == WAIT_OBJECT_0) {
             memcpy(data, current->data, size);
             if (*target == *data) {
-                //printf("found\n");
 
                 if (prev == NULL) {
                     (*head) = current->next;

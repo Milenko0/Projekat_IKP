@@ -7,14 +7,12 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
-#include "../Common/Measurement.h";
 #include "../Common/Measurement.cpp";
 #include "../Common/Lista.cpp";
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 
 
 #define DEFAULT_BUFLEN 524 
-#define PUBLISHER_PORT "5555"
-#define SUBSCRIBER_PORT "5556"
+#define DEFAULT_PORT "5555"
 #define MAX_CLIENTS 10
 #define TIMEVAL_SEC 0
 #define TIMEVAL_USEC 0
@@ -24,9 +22,8 @@
 //int Init();
 bool InitCriticalSections();
 DWORD WINAPI Listen(LPVOID param);
-void SetNonBlocking();
 bool InitializeWindowsSockets();
-SOCKET InitializeListenSocket(const char* port);
+SOCKET InitializeListenSocket();
 void SetAcceptedSocketsInvalid();
 void ProcessMessages();
 void ProcessMeasurement(Measurement * measure);
@@ -142,10 +139,8 @@ bool InitializeWindowsSockets()
 	return true;
 }
 
-SOCKET InitializeListenSocket(const char* port) {
+SOCKET InitializeListenSocket() {
 
-	SOCKET listenSocket = INVALID_SOCKET;
-	// Prepare address information structures
 	addrinfo* resultingAddress = NULL;
 	addrinfo hints;
 
@@ -156,7 +151,7 @@ SOCKET InitializeListenSocket(const char* port) {
 	hints.ai_flags = AI_PASSIVE;     
 
 	// Resolve the server address and port
-	int iResult = getaddrinfo(NULL, port, &hints, &resultingAddress);
+	int iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &resultingAddress);
 	if (iResult != 0)
 	{
 		printf("getaddrinfo failed with error: %d\n", iResult);
@@ -194,6 +189,10 @@ SOCKET InitializeListenSocket(const char* port) {
 		printf("ioctlsocket failed with error: %ld\n", iResult);
 		return INVALID_SOCKET;
 	}
+	FD_ZERO(&readfds);
+	FD_SET(listenSocket, &readfds);
+	timeVal.tv_sec = TIMEVAL_SEC;
+	timeVal.tv_usec = TIMEVAL_USEC;
 	return listenSocket;
 }
 
@@ -259,7 +258,8 @@ void ProcessMessages() {
 }
 
 void ProcessMeasurement(Measurement* measure) {
-	printf("[DEBUG] Service received: ");
+	printf("Primljena poruka: ");
+	PrintMeasurement(measure);
 
 	switch (measure->topic)
 	{

@@ -13,18 +13,3 @@ typedef struct Node
     HANDLE mutex;
     struct Node* next;
 }NODE;
-
-/*
-void InitGenericList(NODE** head);
-
-
-void GenericListPushAtStart(NODE** head_ref, void* new_data, size_t data_size);
-
-void PrintGenericList(NODE* node, void (*fptr)(void*));
-
-
-
-void FreeGenericList(NODE** head);
-
-
-bool DeleteNode(NODE** head, void* toDelete, size_t size);*/
