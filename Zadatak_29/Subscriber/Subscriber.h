@@ -124,6 +124,7 @@ void Subscribe()
     char c = getchar();
     char t1[2] = "s";
     char t2[2] = "a";
+    char t3[2] = "o";
     switch (c)
     {
     case '1':
@@ -133,8 +134,8 @@ void Subscribe()
         TCPSend(connectSocket, t2);
         break;
     case '3':
-        TCPSend(connectSocket, t1);
-        TCPSend(connectSocket, t2);
+        TCPSend(connectSocket, t3);
+       // TCPSend(connectSocket, t2);
         break;
     default:
         printf("\nNevalidan unos.\n");

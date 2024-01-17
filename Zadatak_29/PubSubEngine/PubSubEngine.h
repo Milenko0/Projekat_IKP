@@ -42,8 +42,6 @@ CRITICAL_SECTION CSStatusData;
 CRITICAL_SECTION CSAnalogSubs;
 CRITICAL_SECTION CSStatusSubs;
 
-NODE* publisherList = NULL;
-NODE* subscriberList = NULL;
 NODE* statusData = NULL;
 NODE* analogData = NULL;
 NODE* statusSubscribers = NULL;
@@ -236,15 +234,25 @@ void ProcessMessages() {
 			SOCKET* ptr = &acceptedSockets[i];
 			if (data[0] == 'a') {
 				EnterCriticalSection(&CSAnalogSubs);
-				GenericListPushAtStart(&analogSubscribers, ptr, sizeof(SOCKET));
-				SendToNewSubscriber(acceptedSockets[i], analogData);
+				ListPushAtStart(&analogSubscribers, ptr, sizeof(SOCKET));
+				//SendToNewSubscriber(acceptedSockets[i], analogData);
 				LeaveCriticalSection(&CSAnalogSubs);
 			}
 			else if (data[0] == 's') {
 				EnterCriticalSection(&CSStatusSubs);
-				GenericListPushAtStart(&statusSubscribers, ptr, sizeof(SOCKET));
-				SendToNewSubscriber(acceptedSockets[i], statusData);
+				ListPushAtStart(&statusSubscribers, ptr, sizeof(SOCKET));
+				//SendToNewSubscriber(acceptedSockets[i], statusData);
 				LeaveCriticalSection(&CSStatusSubs);
+			}
+			else if (data[0] == 'o') {
+				EnterCriticalSection(&CSStatusSubs);
+				ListPushAtStart(&statusSubscribers, ptr, sizeof(SOCKET));
+				//SendToNewSubscriber(acceptedSockets[i], statusData);
+				LeaveCriticalSection(&CSStatusSubs);
+				EnterCriticalSection(&CSAnalogSubs);
+				ListPushAtStart(&analogSubscribers, ptr, sizeof(SOCKET));
+				//SendToNewSubscriber(acceptedSockets[i], analogData);
+				LeaveCriticalSection(&CSAnalogSubs);
 			}
 			else {
 				Measurement* newMeasurement = (Measurement*)malloc(sizeof(Measurement));
@@ -265,13 +273,13 @@ void ProcessMeasurement(Measurement* measure) {
 	{
 	case Analog:
 		EnterCriticalSection(&CSAnalogData);
-		GenericListPushAtStart(&analogData, measure, sizeof(Measurement));
+		ListPushAtStart(&analogData, measure, sizeof(Measurement));
 		UpdateSubscribers(measure, analogSubscribers);
 		LeaveCriticalSection(&CSAnalogData);
 		break;
 	case Status:
 		EnterCriticalSection(&CSStatusData);
-		GenericListPushAtStart(&statusData, measure, sizeof(Measurement));
+		ListPushAtStart(&statusData, measure, sizeof(Measurement));
 		UpdateSubscribers(measure, statusSubscribers);
 		LeaveCriticalSection(&CSStatusData);
 		break;
@@ -288,12 +296,10 @@ void Cleanup() {
 	}
 	WSACleanup();
 
-	FreeGenericList(&publisherList);
-	FreeGenericList(&subscriberList);
-	FreeGenericList(&statusData);
-	FreeGenericList(&analogData);
-	FreeGenericList(&statusSubscribers);
-	FreeGenericList(&analogSubscribers);
+	FreeList(&statusData);
+	FreeList(&analogData);
+	FreeList(&statusSubscribers);
+	FreeList(&analogSubscribers);
 
 	SAFE_DELETE_HANDLE(listenHandle);
 

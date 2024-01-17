@@ -8,7 +8,7 @@
 
 #include "../Common/Lista.h";
 
-void InitGenericList(NODE** head) {
+void InitList(NODE** head) {
     *head = NULL;
     (*head)->mutex = CreateMutex(
         NULL,              // default security attributes
@@ -17,7 +17,7 @@ void InitGenericList(NODE** head) {
 
 }
 
-void GenericListPushAtStart(NODE** head_ref, void* new_data, size_t data_size)
+void ListPushAtStart(NODE** head_ref, void* new_data, size_t data_size)
 {
     NODE* new_node = (NODE*)malloc(sizeof(NODE));
 
@@ -33,7 +33,7 @@ void GenericListPushAtStart(NODE** head_ref, void* new_data, size_t data_size)
     (*head_ref) = new_node;
 }
 
-void PrintGenericList(NODE* node, void (*fptr)(void*))
+void PrintList(NODE* node, void (*fptr)(void*))
 {
     DWORD dwWaitResult;
     while (node != NULL)
@@ -49,7 +49,7 @@ void PrintGenericList(NODE* node, void (*fptr)(void*))
     }
 }
 
-void FreeGenericList(NODE** head) {
+void FreeList(NODE** head) {
     if (*head == NULL) {
         return;
     }
@@ -69,7 +69,7 @@ void FreeGenericList(NODE** head) {
     }
 
     if (next != NULL) {
-        FreeGenericList(&next);
+        FreeList(&next);
     }
 }
 
