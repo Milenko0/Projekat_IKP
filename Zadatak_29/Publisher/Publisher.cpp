@@ -44,9 +44,13 @@ int main()
 
 	SendChoices(choice, interval);
 
+
 	// cleanup
 	closesocket(connectSocket);
 	WSACleanup();
+
+	printf("Server se ugasio pritisnite ENTER za izlazak.\n");
+	getch();
 	return 0;
 }
 

@@ -86,6 +86,8 @@ void SendChoices(int choice, int interval) {
 		}
 		else {
 			printf("Doslo je do greske prilikom slanja\n");
+			free(m);
+			return;
 		}
 		free(m);
 		Sleep(interval);

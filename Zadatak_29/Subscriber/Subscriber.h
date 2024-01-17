@@ -34,7 +34,11 @@ DWORD WINAPI Receive(LPVOID param)
 {
 	char* data = (char*)malloc(sizeof(Measurement));
 	while (true) {
-		TCPReceive(connectSocket, data, sizeof(Measurement));
+        if (!TCPReceive(connectSocket, data, sizeof(Measurement))) {
+            printf("Server se ugasio.\n");
+            return 1;
+        }
+		//TCPReceive(connectSocket, data, sizeof(Measurement));
 		Measurement* newMeasurement = (Measurement*)malloc(sizeof(Measurement));
 		memcpy(newMeasurement, data, sizeof(Measurement));
 		if (Validate(newMeasurement)) {

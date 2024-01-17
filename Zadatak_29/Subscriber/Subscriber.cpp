@@ -18,11 +18,11 @@ int main()
     printf("Subscriber je pretplacen na izabrani topik.\n");
 
     StartRecieveThread();
-
-    getchar();
 	// cleanup
 	closesocket(connectSocket);
 	WSACleanup();
+	printf("Pritisnite ENTER za izlazak.\n");
+	getch();
 
 	return 0;
 }
