@@ -82,7 +82,7 @@ void SendChoices(int choice, int interval) {
 		else m = GenerateMeasurement();
 
 		if (TCPSend(connectSocket, *m)) {
-			//printf("Poslato: %s %s %d \n",);
+			PrintMeasurement(m);
 		}
 		else {
 			printf("Doslo je do greske prilikom slanja\n");

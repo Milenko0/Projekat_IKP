@@ -8,8 +8,6 @@
 
 typedef struct Node
 {
-    // Any data type can be stored in this node 
     void* data;
-    HANDLE mutex;
     struct Node* next;
 }NODE;

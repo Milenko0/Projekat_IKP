@@ -135,7 +135,6 @@ void Subscribe()
         break;
     case '3':
         TCPSend(connectSocket, t3);
-       // TCPSend(connectSocket, t2);
         break;
     default:
         printf("\nNevalidan unos.\n");

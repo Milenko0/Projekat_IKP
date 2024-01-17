@@ -5,72 +5,54 @@
 #include <stdio.h>
 #include <time.h>
 
-
 #include "../Common/Lista.h";
 
 void InitList(NODE** head) {
     *head = NULL;
-    (*head)->mutex = CreateMutex(
-        NULL,              // default security attributes
-        FALSE,             // initially not owned
-        NULL);             // unnamed mutex
-
 }
 
 void ListPushAtStart(NODE** head_ref, void* new_data, size_t data_size)
 {
+    // Allocate memory for node 
     NODE* new_node = (NODE*)malloc(sizeof(NODE));
 
     new_node->data = malloc(data_size);
     new_node->next = (*head_ref);
-    new_node->mutex = CreateMutex(
-        NULL,              // default security attributes
-        FALSE,             // initially not owned
-        NULL);             // unnamed mutex
 
+    // Copy contents of new_data to newly allocated memory. 
     memcpy(new_node->data, new_data, data_size);
 
+    // Change head pointer as new node is added at the beginning 
     (*head_ref) = new_node;
 }
 
 void PrintList(NODE* node, void (*fptr)(void*))
 {
-    DWORD dwWaitResult;
     while (node != NULL)
     {
-        dwWaitResult = WaitForSingleObject(
-            node->mutex,    // handle to mutex
-            INFINITE);  // no time-out interval
-        if (dwWaitResult == WAIT_OBJECT_0) {  // The thread got ownership of the mutex
-            (*fptr)(node->data);
-            node = node->next;
-            ReleaseMutex(node->mutex);
-        }
+        (*fptr)(node->data);
+        node = node->next;
     }
 }
 
 void FreeList(NODE** head) {
-    if (*head == NULL) {
+    NODE* temp = *head;
+    if (temp == NULL) {
         return;
     }
 
-    NODE* next = (*head)->next;
-    DWORD dwWaitResult = WaitForSingleObject(
-        (*head)->mutex,    // handle to mutex
-        INFINITE);  // no time-out interval
-    if (dwWaitResult == WAIT_OBJECT_0) {
-        CloseHandle((*head)->mutex);
-        free((*head)->data);
-        (*head)->data = NULL;
-        (*head)->next = NULL;
-        free(*head);
-        *head = NULL;
-        //release mutex on null??
+    NODE* next;
+    DWORD dwWaitResult;
+    while (temp != NULL) {
+        next = temp->next;
+        free(temp->data);
+        temp->data = NULL;
+        temp->next = NULL;
+        free(temp);
+        temp = next;
     }
 
-    if (next != NULL) {
-        FreeList(&next);
-    }
+    *head = NULL;
 }
 
 
@@ -85,31 +67,22 @@ bool DeleteNode(NODE** head, void* toDelete, size_t size) {
     memcpy(target, toDelete, size);
     char* data = (char*)malloc(size);
     while (current != NULL) {
-        DWORD dwWaitResult = WaitForSingleObject(
-            (current)->mutex,    // handle to mutex
-            INFINITE);  // no time-out interval
-        if (dwWaitResult == WAIT_OBJECT_0) {
-            memcpy(data, current->data, size);
-            if (*target == *data) {
-
-                if (prev == NULL) {
-                    (*head) = current->next;
-                }
-                else {
-                    prev->next = current->next;
-                }
-                free(current->data);
-                free(current);
-                free(data);
-                free(target);
-                return true;
+        memcpy(data, current->data, size);
+        if (*target == *data) {
+            if (prev == NULL) {
+                (*head) = current->next;
             }
-            ReleaseMutex(current->mutex);
-            CloseHandle(current->mutex);
-            prev = current;
-            current = current->next;
+            else {
+                prev->next = current->next;
+            }
+            free(current->data);
+            free(current);
+            free(data);
+            free(target);
+            return true;
         }
-
+        prev = current;
+        current = current->next;
     }
     free(target);
     free(data);
